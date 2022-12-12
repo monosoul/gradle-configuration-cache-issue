@@ -3,6 +3,7 @@ package dev.monosoul.gradle.configuration.cache.issue
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -16,6 +17,7 @@ import javax.inject.Inject
 open class FilePrintingTask @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
+    providerFactory: ProviderFactory,
 ) : DefaultTask() {
 
     @InputFile
@@ -26,7 +28,7 @@ open class FilePrintingTask @Inject constructor(
 
     @Input
     val maybeSomeFileContent = objectFactory.property<String>().convention(
-        someFile.map { it.asFile.readText() }
+        providerFactory.fileContents(someFile).asText
     )
 
     @TaskAction
